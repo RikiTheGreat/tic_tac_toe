@@ -1,0 +1,9 @@
+{
+    "version": 4,
+    "vendor": {
+        "conan": {}
+    },
+    "include": [
+        "/home/riki/lab/practices/Qt/tic_tac_toe/build/CMakePresets.json"
+    ]
+}

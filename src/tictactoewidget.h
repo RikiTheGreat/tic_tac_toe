@@ -23,9 +23,12 @@ public:
 
     void setSide(int gs);
     int getSide() const noexcept;
+    Winner getOutCome() const noexcept;
+    void setOutComeMessage(QString const& msg);
 signals:
     void gameOver();
     void changePlayer();
+    void determineOutCome();
 private:
     void createBoard();
     Winner determineWinner(Symbol sym, int buttonIndex);
@@ -43,5 +46,7 @@ private:
     Player player;
     Winner winner;
     int gameSide;
+    QString outComeMessage;
+    int startWidth;
 };
 #endif  // TICTACTOEWIDGET_H

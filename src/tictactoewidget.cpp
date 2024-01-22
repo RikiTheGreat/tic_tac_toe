@@ -264,16 +264,18 @@ void TicTacToeWidget::handleClickOnBoard(int id) {
         }
 
     } else if (winner == Winner::draw) {
-        qInfo() << "Draw";
+        emit determineOutCome();
         QTimer::singleShot(MetaData::FREEZE_TIME, this, &TicTacToeWidget::gameOver);
 
     } else {
         // make the game to stop
         this->setDisabled(true);
-        if (winner == Winner::player1)
-            logger(logger_level::INFO, "Player1 is the winner");
-        else if (winner == Winner::player2)
-            logger(logger_level::INFO, "Player2 is the winner");
+        if (winner == Winner::player1) {
+            emit determineOutCome();
+        }
+        else if (winner == Winner::player2) {
+            emit determineOutCome();
+        }
 
         QTimer::singleShot(MetaData::FREEZE_TIME, this, &TicTacToeWidget::gameOver);
     }
@@ -286,7 +288,9 @@ void TicTacToeWidget::finishGame() {
     auto vLayout = new QVBoxLayout(this);
     vLayout->setAlignment(Qt::AlignCenter);
 
-    QLabel *lbl_restart = new QLabel("text", this);
+    QLabel *lbl_restart = new QLabel(outComeMessage, this);
+    lbl_restart->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+
     QPushButton *btn_restart = new QPushButton("restart", this);
     QString lbl_btn_color;
 
@@ -308,14 +312,17 @@ void TicTacToeWidget::finishGame() {
     // connecting btn to restartGame slot
     connect(btn_restart, &QPushButton::clicked, this, &TicTacToeWidget::restartGame);
 
+    startWidth = this->width();
     vLayout->addWidget(lbl_restart);
     vLayout->addWidget(btn_restart);
+    this->setMinimumWidth(MetaData::END_GAME_WITH);
 }
 
 /**
  * @brief TicTacToeWidget::restartGame
  */
 void TicTacToeWidget::restartGame() {
+    this->setMinimumWidth(startWidth);
     emptyBoard();
     this->setEnabled(true);
     createBoard();
@@ -354,11 +361,36 @@ const QList<QPushButton *> TicTacToeWidget::getBoard() noexcept {
     return this->board_list;
 }
 
+/**
+ * @brief TicTacToeWidget::setSide
+ * @param gs
+ */
 void TicTacToeWidget::setSide(int gs) {
     gameSide = gs;
 }
 
+/**
+ * @brief TicTacToeWidget::getSide
+ * @return gameSide
+ */
 int TicTacToeWidget::getSide() const noexcept{
     return gameSide;
+}
+
+/**
+ * @brief  TicTacToeWidget::getOutCome()
+ * @return winner
+ */
+Winner TicTacToeWidget::getOutCome() const noexcept {
+    return winner;
+}
+
+/**
+ * set outcome message
+ * @brief TicTacToeWidget::setOutComeMessage
+ * @param msg
+ */
+void TicTacToeWidget::setOutComeMessage(const QString &msg) {
+    outComeMessage = msg;
 }
 

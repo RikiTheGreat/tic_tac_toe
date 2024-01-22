@@ -28,7 +28,7 @@ private slots:
     // represents a new game
     void newGame() noexcept;
     void boldCurrentPlayer();
-
+    void determineOutComeMessage();
 
 private:
     Ui::mainwindow *ui;

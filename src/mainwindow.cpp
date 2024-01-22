@@ -28,6 +28,9 @@ mainwindow::mainwindow(QWidget *parent)
     // bold current player
     connect(ui->tictactoe, &TicTacToeWidget::changePlayer, this, &mainwindow::boldCurrentPlayer);
     boldCurrentPlayer();
+
+    connect(ui->tictactoe, &TicTacToeWidget::determineOutCome, this,
+            &mainwindow::determineOutComeMessage);
 }
 
 mainwindow::~mainwindow() {
@@ -92,6 +95,9 @@ void mainwindow::newGame() noexcept {
     ui->tictactoe->restartGame();
 }
 
+/** bold current player's label
+ * @brief mainwindow::boldCurrentPlayer
+ */
 void mainwindow::boldCurrentPlayer() {
     auto normFont = QFont(ui->p1_lbl->font().family(), 15, QFont::Normal);
    auto boldFont = QFont(normFont.family(), 15+ 5, QFont::Bold);
@@ -106,4 +112,26 @@ void mainwindow::boldCurrentPlayer() {
         ui->p1_lbl->setFont(normFont);
     }
 
+}
+
+/**
+ * @brief mainwindow::determineOutComeMessage
+ */
+void mainwindow::determineOutComeMessage() {
+    QString msg;
+    if(auto outCome = ui->tictactoe->getOutCome(); outCome == Winner::player1) {
+        msg = "The winner is " + ui->p1_lbl->text();
+        ui->tictactoe->setOutComeMessage(msg);
+    }
+    else if(outCome == Winner::player2) {
+        msg = "The winner is " + ui->p2_lbl->text();
+        ui->tictactoe->setOutComeMessage(msg);
+
+    }
+    else {
+        msg = "Draw Game";
+        ui->tictactoe->setOutComeMessage(msg);
+    }
+
+    logger(logger_level::INFO, msg);
 }

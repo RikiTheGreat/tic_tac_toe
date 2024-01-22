@@ -8,9 +8,6 @@
  * represents number of rows and columns for board
  */
 struct MetaData {
-    static constexpr int ROWS{4};
-    static constexpr int COLUMNS{4};
-    static constexpr int BOARD_SIZE{ROWS * COLUMNS};
     static inline QString PLAYER_1_COLOR{"blue"};
     static inline QString PLAYER_2_COLOR{"red"};
     static inline QString DRAW_COLOR{"yellow"};
@@ -55,5 +52,13 @@ enum class logger_level {
     INFO,
     WARN,
     ERROR
+};
+
+/**
+ * @brief represents the mode of the game
+ */
+enum class Mode {
+    AI,
+    TwoPlayer
 };
 #endif  // BASE_H

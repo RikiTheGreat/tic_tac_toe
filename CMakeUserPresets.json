@@ -5,5 +5,18 @@
     },
     "include": [
         "/home/riki/lab/practices/Qt/tic_tac_toe/build/CMakePresets.json"
-    ]
+    ],"configurePresets": [
+    {
+        "name": "conan-make",
+        "displayName": "make version",
+        "inherits": "conan-release",
+	"generator": "Unix Makefiles"
+    },{
+	"name": "conan-ninja",
+        "displayName": "ninja version",
+        "inherits": "conan-release",
+        "generator": "Ninja"
+    }
+    	
+	 ]
 }

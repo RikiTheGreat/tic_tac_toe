@@ -9,11 +9,10 @@
 #include "logger.h"
 
 TicTacToeWidget::TicTacToeWidget(QWidget *parent)
-    : QWidget(parent), player{Player::player1}, winner{Winner::noWinnerYet}
+    : QWidget(parent), player{Player::player1}, winner{Winner::noWinnerYet}, gameSide(SideConfig::MIN_RANGE)
 
 {
     connect(this, &TicTacToeWidget::gameOver, this, &TicTacToeWidget::finishGame);
-    createBoard();
 }
 
 TicTacToeWidget::~TicTacToeWidget() = default;
@@ -25,8 +24,8 @@ TicTacToeWidget::~TicTacToeWidget() = default;
 void TicTacToeWidget::createBoard() {
     board_layout = new QGridLayout(this);
 
-    for (int row{}; row < MetaData::ROWS; ++row) {
-        for (int col{}; col < MetaData::COLUMNS; ++col) {
+    for (int row{}; row < gameSide; ++row) {
+        for (int col{}; col < gameSide; ++col) {
             auto btn = new QPushButton("", this);
             btn->setMinimumSize(50, 50);
             board_layout->addWidget(btn, row, col);
@@ -43,8 +42,8 @@ void TicTacToeWidget::createBoard() {
 
 Winner TicTacToeWidget::determineWinner(Symbol sym, int buttonIndex) {
     // step1: get the row and coulmn number of clicked button in the grid
-    int rowNumber{buttonIndex / MetaData::COLUMNS};
-    int colNumber{buttonIndex % MetaData::COLUMNS};
+    int rowNumber{buttonIndex / gameSide};
+    int colNumber{buttonIndex % gameSide};
 
     // counting variable
     int counter{};
@@ -54,9 +53,9 @@ Winner TicTacToeWidget::determineWinner(Symbol sym, int buttonIndex) {
     bool validateSecondCheck{true};
     int newCol = colNumber;
 
-    while (++newCol < MetaData::COLUMNS) {
+    while (++newCol < gameSide) {
         // position of the next button in the board
-        int newPosition = rowNumber * MetaData::COLUMNS + newCol;
+        int newPosition = rowNumber * gameSide + newCol;
 
         validateSecondCheck = checkSymbol(sym, newPosition);
         if (!validateSecondCheck)
@@ -69,7 +68,7 @@ Winner TicTacToeWidget::determineWinner(Symbol sym, int buttonIndex) {
     newCol = colNumber;  // reset the index
     while (validateSecondCheck && --newCol >= 0) {
         // position of the next button in the board
-        int newPosition = rowNumber * MetaData::COLUMNS + newCol;
+        int newPosition = rowNumber * gameSide + newCol;
         validateSecondCheck = checkSymbol(sym, newPosition);
         if (!validateSecondCheck)
             break;
@@ -78,7 +77,7 @@ Winner TicTacToeWidget::determineWinner(Symbol sym, int buttonIndex) {
     }
 
     // horizontal win
-    if (++counter == MetaData::COLUMNS) {
+    if (++counter == gameSide) {
         if (sym == Symbol::X)
             return Winner::player1;
         else if (sym == Symbol::O)
@@ -93,7 +92,7 @@ Winner TicTacToeWidget::determineWinner(Symbol sym, int buttonIndex) {
     // backward check
     while (--newRow >= 0) {
         // position of the next button in the board
-        int newPositionIndex = newRow * MetaData::COLUMNS + colNumber;
+        int newPositionIndex = newRow * gameSide + colNumber;
 
         validateSecondCheck = checkSymbol(sym, newPositionIndex);
         if (!validateSecondCheck)
@@ -104,9 +103,9 @@ Winner TicTacToeWidget::determineWinner(Symbol sym, int buttonIndex) {
 
     // upward check
     newRow = rowNumber;  // reset the index
-    while (validateSecondCheck && ++newRow < MetaData::ROWS) {
+    while (validateSecondCheck && ++newRow < gameSide) {
         // position of the next button in the board
-        int newPositionIndex = newRow * MetaData::COLUMNS + colNumber;
+        int newPositionIndex = newRow * gameSide + colNumber;
         validateSecondCheck = checkSymbol(sym, newPositionIndex);
         if (!validateSecondCheck)
             break;
@@ -114,7 +113,7 @@ Winner TicTacToeWidget::determineWinner(Symbol sym, int buttonIndex) {
             counter++;  // count the symbol on the next button
     }
 
-    if (++counter == MetaData::ROWS) {
+    if (++counter == gameSide) {
         if (sym == Symbol::X)
             return Winner::player1;
         else if (sym == Symbol::O)
@@ -129,7 +128,7 @@ Winner TicTacToeWidget::determineWinner(Symbol sym, int buttonIndex) {
     newCol = colNumber;
     while (--newRow >= 0 && --newCol >= 0) {
         // get the position index of next position
-        int newPositionIndex = newRow * MetaData::COLUMNS + newCol;
+        int newPositionIndex = newRow * gameSide + newCol;
         validateSecondCheck = checkSymbol(sym, newPositionIndex);
         if (!validateSecondCheck)
             break;
@@ -140,9 +139,9 @@ Winner TicTacToeWidget::determineWinner(Symbol sym, int buttonIndex) {
     // downward check
     newRow = rowNumber;
     newCol = colNumber;
-    while (validateSecondCheck && ++newRow < MetaData::ROWS && ++newCol < MetaData::COLUMNS) {
+    while (validateSecondCheck && ++newRow < gameSide && ++newCol < gameSide) {
         // position of the next button in the board
-        int newPositionIndex = newRow * MetaData::COLUMNS + newCol;
+        int newPositionIndex = newRow * gameSide + newCol;
         validateSecondCheck = checkSymbol(sym, newPositionIndex);
         if (!validateSecondCheck)
             break;
@@ -151,7 +150,7 @@ Winner TicTacToeWidget::determineWinner(Symbol sym, int buttonIndex) {
     }
 
     // did the player win diagonaly? (backslash direction)
-    if (++counter == MetaData::ROWS) {
+    if (++counter == gameSide) {
         if (sym == Symbol::X)
             return Winner::player1;
         else if (sym == Symbol::O)
@@ -165,9 +164,9 @@ Winner TicTacToeWidget::determineWinner(Symbol sym, int buttonIndex) {
     newRow = rowNumber;
     newCol = colNumber;
 
-    while (--newRow >= 0 && ++newCol < MetaData::ROWS) {
+    while (--newRow >= 0 && ++newCol < gameSide) {
         // position of the next button in the board
-        int newPositionIndex = newRow * MetaData::COLUMNS + newCol;
+        int newPositionIndex = newRow * gameSide + newCol;
         validateSecondCheck = checkSymbol(sym, newPositionIndex);
         if (!validateSecondCheck)
             break;
@@ -178,9 +177,9 @@ Winner TicTacToeWidget::determineWinner(Symbol sym, int buttonIndex) {
     // downward check
     newRow = rowNumber;
     newCol = colNumber;
-    while (validateSecondCheck && ++newRow < MetaData::ROWS && --newCol >= 0) {
+    while (validateSecondCheck && ++newRow < gameSide && --newCol >= 0) {
         // position of the next button in the board
-        int newPositionIndex = newRow * MetaData::COLUMNS + newCol;
+        int newPositionIndex = newRow * gameSide + newCol;
         validateSecondCheck = checkSymbol(sym, newPositionIndex);
         if (!validateSecondCheck)
             break;
@@ -189,7 +188,7 @@ Winner TicTacToeWidget::determineWinner(Symbol sym, int buttonIndex) {
     }
 
     // did the player win diagonaly? (backslash direction)
-    if (++counter == MetaData::ROWS) {
+    if (++counter == gameSide) {
         if (sym == Symbol::X)
             return Winner::player1;
         else if (sym == Symbol::O)
@@ -198,7 +197,7 @@ Winner TicTacToeWidget::determineWinner(Symbol sym, int buttonIndex) {
 
     // check for draw
     bool check_draw = true;
-    for (int i = 0; i < MetaData::BOARD_SIZE; ++i)
+    for (int i = 0; i < gameSide * gameSide ; ++i)
         if (board_list.at(i)->text() == "")
             check_draw = false;
 
@@ -350,3 +349,12 @@ void TicTacToeWidget::resetBoard() noexcept {
 const QList<QPushButton *> TicTacToeWidget::getBoard() noexcept {
     return this->board_list;
 }
+
+void TicTacToeWidget::setSide(int gs) {
+    gameSide = gs;
+}
+
+int TicTacToeWidget::getSide() const noexcept{
+    return gameSide;
+}
+

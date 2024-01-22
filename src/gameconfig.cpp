@@ -87,11 +87,11 @@ int gameconfig::getSide() noexcept {
  * @param size
  * set side game value
  */
-void gameconfig::setSide(int side) {
-    if (side > SideConfig::MAX_RANGE || side < SideConfig::MIN_RANGE)
+void gameconfig::setSide(int sg) {
+    if (sg > SideConfig::MAX_RANGE || sg < SideConfig::MIN_RANGE)
         return;
 
-    ui->spinBox->setValue(side);
+    ui->spinBox->setValue(sg);
 }
 
 /**
@@ -121,5 +121,13 @@ void gameconfig::on_buttonBox_clicked(QAbstractButton *button) {
         } else {
             logger(logger_level::INFO, "ai mode selected");
         }
+    }
+}
+
+Mode gameconfig::getMode() const noexcept {
+    if (ui->twoPlayerMode->isChecked()) {
+        return Mode::TwoPlayer;
+    } else {
+        return Mode::AI;
     }
 }

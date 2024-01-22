@@ -21,6 +21,8 @@ public:
     void resetBoard() noexcept;
     [[nodiscard("get the board")]] const QList<QPushButton *> getBoard() noexcept;
 
+    void setSide(int gs);
+    int getSide() const noexcept;
 signals:
     void gameOver();
 
@@ -32,6 +34,7 @@ private:
 private slots:
     void handleClickOnBoard(int id);
     void finishGame();
+public slots:
     void restartGame();
 
 private:
@@ -39,5 +42,6 @@ private:
     QGridLayout *board_layout{};
     Player player;
     Winner winner;
+    int gameSide;
 };
 #endif  // TICTACTOEWIDGET_H

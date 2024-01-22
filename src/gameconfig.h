@@ -4,6 +4,8 @@
 #include <QAbstractButton>
 #include <QDialog>
 
+#include "base.h"
+
 namespace Ui {
 class gameconfig;
 }
@@ -29,7 +31,10 @@ public:
 
     // setter and getter for sides
     int getSide() noexcept;
-    void setSide(int side);
+    void setSide(int sg);
+
+    // get the mode of the game
+    Mode getMode() const noexcept;
 
 public slots:
     void updateOnButton(QString const &str);

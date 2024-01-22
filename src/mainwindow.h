@@ -6,6 +6,7 @@
 #define TIC_TAC_TOE_MAINWINDOW_H
 #include <QMainWindow>
 
+#include "gameconfig.h"
 #include "tictactoewidget.h"
 
 QT_BEGIN_NAMESPACE
@@ -23,8 +24,13 @@ public:
 
     ~mainwindow() override;
 
+private slots:
+    // represents a new game
+    void newGame() noexcept;
+
 private:
     Ui::mainwindow *ui;
+    gameconfig *configuration;
 };
 
 #endif  // TIC_TAC_TOE_MAINWINDOW_H

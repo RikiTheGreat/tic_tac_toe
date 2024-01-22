@@ -27,6 +27,8 @@ public:
 private slots:
     // represents a new game
     void newGame() noexcept;
+    void boldCurrentPlayer();
+
 
 private:
     Ui::mainwindow *ui;

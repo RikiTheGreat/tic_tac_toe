@@ -25,7 +25,7 @@ public:
     int getSide() const noexcept;
 signals:
     void gameOver();
-
+    void changePlayer();
 private:
     void createBoard();
     Winner determineWinner(Symbol sym, int buttonIndex);

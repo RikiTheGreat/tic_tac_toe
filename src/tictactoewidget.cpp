@@ -254,10 +254,14 @@ void TicTacToeWidget::handleClickOnBoard(int id) {
     // determine the winner
     winner = determineWinner(symbol, id);
     if (winner == Winner::noWinnerYet) {
-        if (getPlayer() == Player::player1)
+        if (getPlayer() == Player::player1) {
             setPlayer(Player::player2);
-        else
+            emit changePlayer();
+        }
+        else {
             setPlayer(Player::player1);
+            emit changePlayer();
+        }
 
     } else if (winner == Winner::draw) {
         qInfo() << "Draw";

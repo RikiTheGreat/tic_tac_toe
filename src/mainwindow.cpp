@@ -24,6 +24,10 @@ mainwindow::mainwindow(QWidget *parent)
     QString p2_style = "QLabel{color: " + MetaData::PLAYER_2_COLOR + "};";
     ui->p1_lbl->setStyleSheet(p1_style);
     ui->p2_lbl->setStyleSheet(p2_style);
+
+    // bold current player
+    connect(ui->tictactoe, &TicTacToeWidget::changePlayer, this, &mainwindow::boldCurrentPlayer);
+    boldCurrentPlayer();
 }
 
 mainwindow::~mainwindow() {
@@ -60,27 +64,17 @@ void mainwindow::createMenu() {
  * @brief represents a new game
  */
 void mainwindow::newGame() noexcept {
-    // reset players' names
-    ui->p1_lbl->setText("");
-    ui->p2_lbl->setText("");
+
+    configuration->setPlayer1Name("");
+    configuration->setPlayer2Name("");
 
     // reset game's side
     configuration->setSide(SideConfig::MIN_RANGE);
 
     // if player press cancel button, new game will be aborted
     if (configuration->exec() == QDialog::Rejected) {
-        configuration->setPlayer1Name("");
-        configuration->setPlayer2Name("");
-        configuration->setSide(4);
         return;
     }
-
-
-    // clear configuration fields
-    configuration->setPlayer1Name("");
-    configuration->setPlayer2Name("");
-    configuration->setSide(5);
-
 
     // configuration for players' names
     ui->p1_lbl->setText(configuration->getPlayer1Name());
@@ -96,4 +90,20 @@ void mainwindow::newGame() noexcept {
     ui->tictactoe->setEnabled(true);
 
     ui->tictactoe->restartGame();
+}
+
+void mainwindow::boldCurrentPlayer() {
+    auto normFont = QFont(ui->p1_lbl->font().family(), 15, QFont::Normal);
+   auto boldFont = QFont(normFont.family(), 15+ 5, QFont::Bold);
+
+    if(auto player = ui->tictactoe->getPlayer(); player == Player::player1) {
+        ui->p1_lbl->setFont(boldFont);
+        ui->p2_lbl->setFont(normFont);
+    }
+
+    else if(player == Player::player2) {
+        ui->p2_lbl->setFont(boldFont);
+        ui->p1_lbl->setFont(normFont);
+    }
+
 }

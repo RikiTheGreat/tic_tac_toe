@@ -14,6 +14,8 @@ TicTacToeWidget::TicTacToeWidget(QWidget *parent)
 
 {
     connect(this, &TicTacToeWidget::gameOver, this, &TicTacToeWidget::finishGame);
+    connect(this, &TicTacToeWidget::sendAiMoves, this, &TicTacToeWidget::handleClickOnBoard);
+    connect(this, &TicTacToeWidget::triggerAi, this, &TicTacToeWidget::triggerAiMoveCalculation);
 }
 
 TicTacToeWidget::~TicTacToeWidget() = default;
@@ -350,6 +352,8 @@ Player TicTacToeWidget::getPlayer() const noexcept {
  */
 void TicTacToeWidget::setPlayer(Player newPlayer) noexcept {
     player = newPlayer;
+    if(mode == Mode::AI)
+        emit triggerAi();
 }
 
 /**
@@ -424,4 +428,31 @@ Mode TicTacToeWidget::getMode() const noexcept {
 void TicTacToeWidget::clearContainers() {
     playerMoves.clear();
     aiMoves.clear();
+}
+
+/**
+ * trigger ai calculation
+ * @brief TicTacToeWidget::triggerAiMoveCalculation
+ */
+void TicTacToeWidget::triggerAiMoveCalculation() {
+    if(player == Player::player2) {
+        this->setDisabled(true);
+        connect(this, &TicTacToeWidget::startAiMoveCalculation, this,
+                &TicTacToeWidget::calculateAiMoves);
+        // delay for Ai to decide for his/her move
+        QTimer::singleShot(MetaData::AI_DELAY, this, &TicTacToeWidget::startAiMoveCalculation);
+    }else {
+        this->setEnabled(true);
+        disconnect(this, &TicTacToeWidget::startAiMoveCalculation, this,
+                   &TicTacToeWidget::calculateAiMoves);
+    }
+
+
+}
+
+/**
+ * @brief TicTacToeWidget::calculateAiMoves
+ */
+void TicTacToeWidget::calculateAiMoves() {
+
 }

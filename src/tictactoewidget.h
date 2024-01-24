@@ -31,7 +31,9 @@ signals:
     void gameOver();
     void changePlayer();
     void determineOutCome();
-
+    void sendAiMoves(int);
+    void triggerAi();
+    void startAiMoveCalculation();
 private:
     void createBoard();
     Winner determineWinner(Symbol sym, int buttonIndex);
@@ -40,6 +42,8 @@ private:
 private slots:
     void handleClickOnBoard(int id);
     void finishGame();
+    void triggerAiMoveCalculation();
+    void calculateAiMoves();
 public slots:
     void restartGame(int size = 0);
     void updateMode(Mode m);

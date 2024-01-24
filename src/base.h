@@ -14,6 +14,7 @@ struct MetaData {
     static constexpr int FREEZE_TIME = 2000;  // 2 sec
     static constexpr int END_GAME_WITH = 500;
     static inline  QString AI_NAME = "Master Ai";
+    static constexpr int AI_DELAY = 1000;
 };
 
 /**

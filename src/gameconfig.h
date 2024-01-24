@@ -34,14 +34,19 @@ public:
     void setSide(int sg);
 
     // get the mode of the game
-    Mode getMode() const noexcept;
+    [[nodiscard]] Mode getMode() const noexcept;
+    void setMode(Mode m);
 
 public slots:
     void updateOnButton(QString const &str);
 
 private slots:
     void on_buttonBox_clicked(QAbstractButton *button);
+    void aiMode_checked(bool checked);
+    void twoPlayer_checked(bool checked);
 
+    signals:
+        void modeUpdated(Mode mode);
 private:
     Ui::gameconfig *ui;
     static inline gameconfig *GameConfig = nullptr;

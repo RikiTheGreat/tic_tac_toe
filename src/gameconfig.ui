@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>446</width>
-    <height>350</height>
+    <width>541</width>
+    <height>393</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -86,7 +86,7 @@ color: yellow;</string>
      <item row="2" column="0">
       <widget class="QLabel" name="label">
        <property name="styleSheet">
-        <string notr="true">color:rgb(0, 0, 127);
+        <string notr="true">color:rgb(0, 255, 255);
 font: 15pt &quot;Noto Sans&quot;;</string>
        </property>
        <property name="text">

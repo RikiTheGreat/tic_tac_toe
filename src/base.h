@@ -8,11 +8,12 @@
  * represents number of rows and columns for board
  */
 struct MetaData {
-    static inline QString PLAYER_1_COLOR{"blue"};
+    static inline QString PLAYER_1_COLOR{"cyan"};
     static inline QString PLAYER_2_COLOR{"red"};
     static inline QString DRAW_COLOR{"yellow"};
     static constexpr int FREEZE_TIME = 2000;  // 2 sec
-    static constexpr int END_GAME_WITH  = 500;
+    static constexpr int END_GAME_WITH = 500;
+    static inline  QString AI_NAME = "Master Ai";
 };
 
 /**

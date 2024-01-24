@@ -4,7 +4,6 @@
 #include <QApplication>
 #include <catch2/catch_all.hpp>
 
-
 // note: you must define Qpplication before QWidget
 // ttt_widget is based on QWidget we have to create a useless Qapplication
 //
@@ -32,7 +31,6 @@ TEST_CASE("check reset") {
     REQUIRE(true);
 }
 
-
 SCENARIO("side value can be changes", "[Side]") {
     GIVEN("Default value is 3") {
         TicTacToeWidget tic;
@@ -45,8 +43,5 @@ SCENARIO("side value can be changes", "[Side]") {
                 REQUIRE(tic.getSide() == 5);
             }
         }
-
-
-
     }
 }

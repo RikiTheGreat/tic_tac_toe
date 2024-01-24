@@ -24,11 +24,14 @@ public:
     void setSide(int gs);
     int getSide() const noexcept;
     Winner getOutCome() const noexcept;
-    void setOutComeMessage(QString const& msg);
+    void setOutComeMessage(QString const &msg);
+    Mode getMode() const noexcept;
+    void clearContainers();
 signals:
     void gameOver();
     void changePlayer();
     void determineOutCome();
+
 private:
     void createBoard();
     Winner determineWinner(Symbol sym, int buttonIndex);
@@ -38,8 +41,8 @@ private slots:
     void handleClickOnBoard(int id);
     void finishGame();
 public slots:
-    void restartGame();
-
+    void restartGame(int size = 0);
+    void updateMode(Mode m);
 private:
     QList<QPushButton *> board_list;
     QGridLayout *board_layout{};
@@ -47,6 +50,8 @@ private:
     Winner winner;
     int gameSide;
     QString outComeMessage;
-    int startWidth;
+    Mode mode;
+    QList<int> playerMoves;
+    QList<int> aiMoves;
 };
 #endif  // TICTACTOEWIDGET_H

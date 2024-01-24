@@ -15,7 +15,8 @@ gameconfig::gameconfig(QWidget *parent)
     connect(ui->lineEdit2, &QLineEdit::textChanged, this, &gameconfig::updateOnButton);
     connect(ui->spinBox, &QSpinBox::valueChanged, ui->horizontalSlider, &QSlider::setValue);
     connect(ui->horizontalSlider, &QSlider::valueChanged, ui->spinBox, &QSpinBox::setValue);
-
+    connect(ui->AiMode, &QRadioButton::toggled, this, &gameconfig::aiMode_checked);
+    connect(ui->twoPlayerMode, &QRadioButton::toggled, this, &gameconfig::twoPlayer_checked);
     // set base size for siders
     ui->spinBox->setRange(SideConfig::MIN_RANGE, SideConfig::MAX_RANGE);
     ui->horizontalSlider->setRange(SideConfig::MIN_RANGE, SideConfig::MAX_RANGE);
@@ -117,9 +118,9 @@ void gameconfig::updateOnButton(QString const &str) {
 void gameconfig::on_buttonBox_clicked(QAbstractButton *button) {
     if (button == ui->buttonBox->button(QDialogButtonBox::Ok)) {
         if (ui->twoPlayerMode->isChecked()) {
-            logger(logger_level::INFO, "two player mode selected");
+            logger(logger_level::INFO, "Two player mode selected");
         } else {
-            logger(logger_level::INFO, "ai mode selected");
+            logger(logger_level::INFO, "Ai mode selected");
         }
     }
 }
@@ -130,4 +131,39 @@ Mode gameconfig::getMode() const noexcept {
     } else {
         return Mode::AI;
     }
+}
+
+/**
+ * when user checked ai mode radio button do something
+ * @brief gameconfig::on_AiMode_checked
+ */
+void gameconfig::aiMode_checked(bool checked) {
+    if(checked) {
+        ui->lineEdit2->setText(MetaData::AI_NAME);
+        ui->lineEdit2->setDisabled(true);
+    }
+}
+
+/**
+ * when user checked two player mode radio button do something
+ * @brief gameconfig::on_TwoPlayer_checked()
+ */
+void gameconfig::twoPlayer_checked(bool checked)  {
+    if(checked) {
+        ui->lineEdit2->setText("");
+        ui->lineEdit2->setDisabled(false);
+    }
+}
+
+/**
+ * @brief set game mode
+ * @param m
+ */
+void gameconfig::setMode(Mode m) {
+    if(m == Mode::AI)
+        ui->AiMode->setChecked(true);
+    else
+        ui->twoPlayerMode->setChecked(true);
+
+    emit modeUpdated(m);
 }

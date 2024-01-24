@@ -9,7 +9,8 @@
 #include "logger.h"
 
 TicTacToeWidget::TicTacToeWidget(QWidget *parent)
-    : QWidget(parent), player{Player::player1}, winner{Winner::noWinnerYet}, gameSide(SideConfig::MIN_RANGE)
+    : QWidget(parent), player{Player::player1}, winner{Winner::noWinnerYet}, gameSide(SideConfig::MIN_RANGE),
+    mode{Mode::TwoPlayer}
 
 {
     connect(this, &TicTacToeWidget::gameOver, this, &TicTacToeWidget::finishGame);
@@ -197,7 +198,7 @@ Winner TicTacToeWidget::determineWinner(Symbol sym, int buttonIndex) {
 
     // check for draw
     bool check_draw = true;
-    for (int i = 0; i < gameSide * gameSide ; ++i)
+    for (int i = 0; i < gameSide * gameSide; ++i)
         if (board_list.at(i)->text() == "")
             check_draw = false;
 
@@ -257,8 +258,7 @@ void TicTacToeWidget::handleClickOnBoard(int id) {
         if (getPlayer() == Player::player1) {
             setPlayer(Player::player2);
             emit changePlayer();
-        }
-        else {
+        } else {
             setPlayer(Player::player1);
             emit changePlayer();
         }
@@ -272,8 +272,7 @@ void TicTacToeWidget::handleClickOnBoard(int id) {
         this->setDisabled(true);
         if (winner == Winner::player1) {
             emit determineOutCome();
-        }
-        else if (winner == Winner::player2) {
+        } else if (winner == Winner::player2) {
             emit determineOutCome();
         }
 
@@ -312,7 +311,6 @@ void TicTacToeWidget::finishGame() {
     // connecting btn to restartGame slot
     connect(btn_restart, &QPushButton::clicked, this, &TicTacToeWidget::restartGame);
 
-    startWidth = this->width();
     vLayout->addWidget(lbl_restart);
     vLayout->addWidget(btn_restart);
     this->setMinimumWidth(MetaData::END_GAME_WITH);
@@ -321,8 +319,18 @@ void TicTacToeWidget::finishGame() {
 /**
  * @brief TicTacToeWidget::restartGame
  */
-void TicTacToeWidget::restartGame() {
-    this->setMinimumWidth(startWidth);
+void TicTacToeWidget::restartGame(int size) {
+    static int side{};
+    if(!size && !side) {
+    side = size;
+    }
+    this->setMinimumWidth(50 * side);
+    player = Player::player1;
+    emit changePlayer();
+
+    if(mode == Mode::AI)
+        clearContainers();
+
     emptyBoard();
     this->setEnabled(true);
     createBoard();
@@ -373,7 +381,7 @@ void TicTacToeWidget::setSide(int gs) {
  * @brief TicTacToeWidget::getSide
  * @return gameSide
  */
-int TicTacToeWidget::getSide() const noexcept{
+int TicTacToeWidget::getSide() const noexcept {
     return gameSide;
 }
 
@@ -394,3 +402,26 @@ void TicTacToeWidget::setOutComeMessage(const QString &msg) {
     outComeMessage = msg;
 }
 
+/**
+ * @brief TicTacToeWidget::updateMode
+ * @param mode
+ */
+void TicTacToeWidget::updateMode(Mode m) {
+    this->mode = m;
+}
+
+/**
+ * @brief TicTacToeWidget::getMode()
+ */
+Mode TicTacToeWidget::getMode() const noexcept {
+    return mode;
+}
+
+/**
+ * remove Player and Ai moves
+ * @brief TicTacToeWidget::clearContainers
+ */
+void TicTacToeWidget::clearContainers() {
+    playerMoves.clear();
+    aiMoves.clear();
+}

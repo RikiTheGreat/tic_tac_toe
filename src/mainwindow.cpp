@@ -31,6 +31,8 @@ mainwindow::mainwindow(QWidget *parent)
 
     connect(ui->tictactoe, &TicTacToeWidget::determineOutCome, this,
             &mainwindow::determineOutComeMessage);
+
+    connect(configuration, SIGNAL(modeUpdated(Mode)), ui->tictactoe, SLOT(updateMode(Mode)));
 }
 
 mainwindow::~mainwindow() {
@@ -67,23 +69,26 @@ void mainwindow::createMenu() {
  * @brief represents a new game
  */
 void mainwindow::newGame() noexcept {
-
     configuration->setPlayer1Name("");
     configuration->setPlayer2Name("");
 
-    // reset game's side
+    // reset game's side and mode
     configuration->setSide(SideConfig::MIN_RANGE);
+    configuration->setMode(Mode::TwoPlayer);
 
     // if player press cancel button, new game will be aborted
     if (configuration->exec() == QDialog::Rejected) {
         return;
     }
 
+
     // configuration for players' names
     ui->p1_lbl->setText(configuration->getPlayer1Name());
     ui->p2_lbl->setText(configuration->getPlayer2Name());
 
     auto side = configuration->getSide();
+    if(ui->tictactoe->getMode() == Mode::AI)
+        ui->tictactoe->clearContainers();
 
     // adjustment of the board
     ui->tictactoe->setFixedHeight(50 * (side));
@@ -91,8 +96,7 @@ void mainwindow::newGame() noexcept {
     ui->tictactoe->setSide(side);
     ui->title_lbl->setVisible(false);
     ui->tictactoe->setEnabled(true);
-
-    ui->tictactoe->restartGame();
+    ui->tictactoe->restartGame(side);
 }
 
 /** bold current player's label
@@ -100,18 +104,17 @@ void mainwindow::newGame() noexcept {
  */
 void mainwindow::boldCurrentPlayer() {
     auto normFont = QFont(ui->p1_lbl->font().family(), 15, QFont::Normal);
-   auto boldFont = QFont(normFont.family(), 15+ 5, QFont::Bold);
+    auto boldFont = QFont(normFont.family(), 15 + 5, QFont::Bold);
 
-    if(auto player = ui->tictactoe->getPlayer(); player == Player::player1) {
+    if (auto player = ui->tictactoe->getPlayer(); player == Player::player1) {
         ui->p1_lbl->setFont(boldFont);
         ui->p2_lbl->setFont(normFont);
     }
 
-    else if(player == Player::player2) {
+    else if (player == Player::player2) {
         ui->p2_lbl->setFont(boldFont);
         ui->p1_lbl->setFont(normFont);
     }
-
 }
 
 /**
@@ -119,16 +122,14 @@ void mainwindow::boldCurrentPlayer() {
  */
 void mainwindow::determineOutComeMessage() {
     QString msg;
-    if(auto outCome = ui->tictactoe->getOutCome(); outCome == Winner::player1) {
+    if (auto outCome = ui->tictactoe->getOutCome(); outCome == Winner::player1) {
         msg = "The winner is " + ui->p1_lbl->text();
         ui->tictactoe->setOutComeMessage(msg);
-    }
-    else if(outCome == Winner::player2) {
+    } else if (outCome == Winner::player2) {
         msg = "The winner is " + ui->p2_lbl->text();
         ui->tictactoe->setOutComeMessage(msg);
 
-    }
-    else {
+    } else {
         msg = "Draw Game";
         ui->tictactoe->setOutComeMessage(msg);
     }

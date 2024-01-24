@@ -2,7 +2,6 @@
 #include <QApplication>
 
 #include "gameconfig.h"
-
 #include "mainwindow.h"
 #include "tictactoewidget.h"
 int main(int argc, char *argv[]) {

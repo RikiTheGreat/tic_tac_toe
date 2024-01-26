@@ -1,16 +1,11 @@
 #include <QApplication>
+#include <QLineEdit>
+#include <QRadioButton>
 #include <QSpinBox>
 #include <catch2/catch_all.hpp>
 
 #include "base.h"
 #include "gameconfig.h"
-
-constinit int fake_argc = 1;
-char **fake_argv{};
-QApplication app(fake_argc, fake_argv);
-
-#include <QRadioButton>
-#include <QLineEdit>
 
 TEST_CASE("check gameConfig players names") {
     gameconfig g;
@@ -27,22 +22,21 @@ TEST_CASE("check maximum slide range") {
     REQUIRE(spin->maximum() == SideConfig::MAX_RANGE);
 }
 
-
 SCENARIO("check Ai mode configuration") {
     GIVEN("by default two player mode is selected ") {
-    gameconfig g;
-    auto ai_btn = g.findChild<QRadioButton*>("AiMode");
-    auto twoPlayer_btn = g.findChild<QRadioButton*>("twoPlayerMode");
+        gameconfig g;
+        auto ai_btn = g.findChild<QRadioButton *>("AiMode");
+        auto twoPlayer_btn = g.findChild<QRadioButton *>("twoPlayerMode");
         REQUIRE(twoPlayer_btn->isChecked());
 
         WHEN("when we click on Ai btn some attributes will change") {
-            ai_btn->clicked();
+            ai_btn->toggle();
 
             THEN("lineEdit two text must be " + MetaData::AI_NAME.toStdString()) {
-                auto lineEdit = g.findChild<QLineEdit*>("lineEdit2");
+                auto lineEdit = g.findChild<QLineEdit *>("lineEdit2");
+                INFO("lineEdit text is " + lineEdit->text().toStdString());
                 REQUIRE(lineEdit->text() == MetaData::AI_NAME);
             }
         }
     }
-
 }

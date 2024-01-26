@@ -2,7 +2,7 @@
 
 #include <QDebug>
 
-void logger(logger_level level, QString const &msg) noexcept {
+void logger(QString const &msg, logger_level level) noexcept {
     // create a logger which prints on terminal and file
     auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
     console_sink->set_level(spdlog::level::warn);

@@ -6,9 +6,9 @@
 
 #include "mainwindow.h"
 
-constinit int fake_argc = 1;
-char **fake_argv{};
-QApplication app(fake_argc, fake_argv);
+// constinit int fake_argc = 1;
+// char **fake_argv{};
+// QApplication app(fake_argc, fake_argv);
 
 TEST_CASE("color of players' labels") {
     mainwindow m;

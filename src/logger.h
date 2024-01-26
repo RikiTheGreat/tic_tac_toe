@@ -13,6 +13,6 @@
  * @param level
  * @param msg
  */
-void logger(logger_level level, QString const &msg) noexcept;
+void logger(QString const &msg, logger_level level = logger_level::INFO) noexcept;
 
 #endif  // TIC_TAC_TOE_LOGGER_H

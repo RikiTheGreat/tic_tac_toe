@@ -44,9 +44,10 @@ private slots:
     void on_buttonBox_clicked(QAbstractButton *button);
     void aiMode_checked(bool checked);
     void twoPlayer_checked(bool checked);
+    void gptMode_checked(bool checked);
+signals:
+    void modeUpdated(Mode mode);
 
-    signals:
-        void modeUpdated(Mode mode);
 private:
     Ui::gameconfig *ui;
     static inline gameconfig *GameConfig = nullptr;

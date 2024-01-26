@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>541</width>
-    <height>393</height>
+    <width>671</width>
+    <height>465</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -150,7 +150,7 @@ color: purple;</string>
 color: orange;</string>
        </property>
        <property name="text">
-        <string>Ai Mode</string>
+        <string>Ai Mode-Easy</string>
        </property>
       </widget>
      </item>
@@ -161,6 +161,17 @@ color: orange;</string>
        </property>
        <property name="standardButtons">
         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="0">
+      <widget class="QRadioButton" name="gptMode">
+       <property name="styleSheet">
+        <string notr="true">font:15pt &quot;Noto Sans&quot;;
+color: pink;</string>
+       </property>
+       <property name="text">
+        <string>Ai Mode-GPT</string>
        </property>
       </widget>
      </item>

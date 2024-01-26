@@ -34,6 +34,8 @@ signals:
     void sendAiMoves(int);
     void triggerAi();
     void startAiMoveCalculation();
+    void startGPTMoveCalculation();
+
 private:
     void createBoard();
     Winner determineWinner(Symbol sym, int buttonIndex);
@@ -44,9 +46,11 @@ private slots:
     void finishGame();
     void triggerAiMoveCalculation();
     void calculateAiMoves();
+    void calculateGPTMoves();
 public slots:
     void restartGame(int size = 0);
     void updateMode(Mode m);
+
 private:
     QList<QPushButton *> board_list;
     QGridLayout *board_layout{};
@@ -55,7 +59,8 @@ private:
     int gameSide;
     QString outComeMessage;
     Mode mode;
-    QList<int> playerMoves;
+    QList<int> player1Moves;
     QList<int> aiMoves;
+    int player1LastMove;
 };
 #endif  // TICTACTOEWIDGET_H

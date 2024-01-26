@@ -3,19 +3,25 @@
 #include <QFont>
 #include <QLabel>
 #include <QMessageBox>
+#include <QRandomGenerator>
 #include <QTimer>
 #include <QVBoxLayout>
+#include <memory>
 
+#include "ai.h"
 #include "logger.h"
 
 TicTacToeWidget::TicTacToeWidget(QWidget *parent)
     : QWidget(parent), player{Player::player1}, winner{Winner::noWinnerYet}, gameSide(SideConfig::MIN_RANGE),
-    mode{Mode::TwoPlayer}
+      mode{Mode::AI}
 
 {
     connect(this, &TicTacToeWidget::gameOver, this, &TicTacToeWidget::finishGame);
     connect(this, &TicTacToeWidget::sendAiMoves, this, &TicTacToeWidget::handleClickOnBoard);
     connect(this, &TicTacToeWidget::triggerAi, this, &TicTacToeWidget::triggerAiMoveCalculation);
+    connect(this, &TicTacToeWidget::startAiMoveCalculation, this,
+            &TicTacToeWidget::calculateAiMoves);
+    connect(this, &TicTacToeWidget::startGPTMoveCalculation, this, &TicTacToeWidget::calculateGPTMoves);
 }
 
 TicTacToeWidget::~TicTacToeWidget() = default;
@@ -44,7 +50,7 @@ void TicTacToeWidget::createBoard() {
 }
 
 Winner TicTacToeWidget::determineWinner(Symbol sym, int buttonIndex) {
-    // step1: get the row and coulmn number of clicked button in the grid
+    // step1: get the row and column number of clicked button in the grid
     int rowNumber{buttonIndex / gameSide};
     int colNumber{buttonIndex % gameSide};
 
@@ -190,7 +196,7 @@ Winner TicTacToeWidget::determineWinner(Symbol sym, int buttonIndex) {
             counter++;  // count the symbol on the next button
     }
 
-    // did the player win diagonaly? (backslash direction)
+    // did the player win diagonally? (backslash direction)
     if (++counter == gameSide) {
         if (sym == Symbol::X)
             return Winner::player1;
@@ -234,7 +240,7 @@ void TicTacToeWidget::emptyBoard() {
 
 void TicTacToeWidget::handleClickOnBoard(int id) {
     if (id < 0 || id > this->board_list.size()) {
-        logger(logger_level::WARN, "Bad ID");
+        logger("Bad ID", logger_level::WARN);
         return;
     }
 
@@ -243,6 +249,8 @@ void TicTacToeWidget::handleClickOnBoard(int id) {
     Symbol symbol;
     btn->setFont(font);
     if (player == Player::player1) {
+        player1LastMove = id;
+        player1Moves.push_back(player1LastMove);
         btn->setStyleSheet("QPushButton{ color: " + MetaData::PLAYER_1_COLOR + ";background: gray}");
         btn->setText("X");
         symbol = Symbol::X;
@@ -323,14 +331,14 @@ void TicTacToeWidget::finishGame() {
  */
 void TicTacToeWidget::restartGame(int size) {
     static int side{};
-    if(!size && !side) {
-    side = size;
+    if (!size && !side) {
+        side = size;
     }
     this->setMinimumWidth(50 * side);
     player = Player::player1;
     emit changePlayer();
 
-    if(mode == Mode::AI)
+    if (mode == Mode::AI || mode == Mode::GPT)
         clearContainers();
 
     emptyBoard();
@@ -352,7 +360,7 @@ Player TicTacToeWidget::getPlayer() const noexcept {
  */
 void TicTacToeWidget::setPlayer(Player newPlayer) noexcept {
     player = newPlayer;
-    if(mode == Mode::AI)
+    if (mode == Mode::AI || mode == Mode::GPT)
         emit triggerAi();
 }
 
@@ -426,7 +434,7 @@ Mode TicTacToeWidget::getMode() const noexcept {
  * @brief TicTacToeWidget::clearContainers
  */
 void TicTacToeWidget::clearContainers() {
-    playerMoves.clear();
+    player1Moves.clear();
     aiMoves.clear();
 }
 
@@ -435,24 +443,39 @@ void TicTacToeWidget::clearContainers() {
  * @brief TicTacToeWidget::triggerAiMoveCalculation
  */
 void TicTacToeWidget::triggerAiMoveCalculation() {
-    if(player == Player::player2) {
+    if (player == Player::player2) {
         this->setDisabled(true);
-        connect(this, &TicTacToeWidget::startAiMoveCalculation, this,
-                &TicTacToeWidget::calculateAiMoves);
         // delay for Ai to decide for his/her move
-        QTimer::singleShot(MetaData::AI_DELAY, this, &TicTacToeWidget::startAiMoveCalculation);
-    }else {
+        if (mode == Mode::AI)
+            QTimer::singleShot(MetaData::AI_DELAY, this, &TicTacToeWidget::startAiMoveCalculation);
+        else if (mode == Mode::GPT)
+            QTimer::singleShot(MetaData::AI_DELAY, this, &TicTacToeWidget::startGPTMoveCalculation);
+    } else {
         this->setEnabled(true);
-        disconnect(this, &TicTacToeWidget::startAiMoveCalculation, this,
-                   &TicTacToeWidget::calculateAiMoves);
     }
-
-
 }
 
 /**
+ * @brief TicTacToeWidget::calculateGPTMoves
+ */
+void TicTacToeWidget::calculateGPTMoves() {
+    Ai ai{};
+    auto result = ai.start_ai(player1Moves, aiMoves, gameSide);
+    aiMoves.push_back(result);
+    emit sendAiMoves(result);
+}
+
+/**
+ * easy mode
  * @brief TicTacToeWidget::calculateAiMoves
  */
-void TicTacToeWidget::calculateAiMoves() {
 
+void TicTacToeWidget::calculateAiMoves() {
+    quint32 randomNum = QRandomGenerator::global()->bounded(gameSide * gameSide);
+
+    while (randomNum > (gameSide * gameSide) || player1Moves.contains(randomNum) || aiMoves.contains(randomNum)) {
+        randomNum = QRandomGenerator::global()->bounded(gameSide * gameSide);
+    }
+    aiMoves.push_back(randomNum);
+    emit sendAiMoves(randomNum);
 }

@@ -32,7 +32,7 @@ mainwindow::mainwindow(QWidget *parent)
     connect(ui->tictactoe, &TicTacToeWidget::determineOutCome, this,
             &mainwindow::determineOutComeMessage);
 
-    connect(configuration, SIGNAL(modeUpdated(Mode)), ui->tictactoe, SLOT(updateMode(Mode)));
+    connect(configuration, &gameconfig::modeUpdated, ui->tictactoe, &TicTacToeWidget::updateMode);
 }
 
 mainwindow::~mainwindow() {
@@ -81,14 +81,14 @@ void mainwindow::newGame() noexcept {
         return;
     }
 
-
     // configuration for players' names
     ui->p1_lbl->setText(configuration->getPlayer1Name());
     ui->p2_lbl->setText(configuration->getPlayer2Name());
 
     auto side = configuration->getSide();
-    if(ui->tictactoe->getMode() == Mode::AI)
+    if (ui->tictactoe->getMode() == Mode::AI || ui->tictactoe->getMode() == Mode::GPT) {
         ui->tictactoe->clearContainers();
+    }
 
     // adjustment of the board
     ui->tictactoe->setFixedHeight(50 * (side));
@@ -134,5 +134,5 @@ void mainwindow::determineOutComeMessage() {
         ui->tictactoe->setOutComeMessage(msg);
     }
 
-    logger(logger_level::INFO, msg);
+    logger(msg);
 }

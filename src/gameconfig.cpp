@@ -17,6 +17,8 @@ gameconfig::gameconfig(QWidget *parent)
     connect(ui->horizontalSlider, &QSlider::valueChanged, ui->spinBox, &QSpinBox::setValue);
     connect(ui->AiMode, &QRadioButton::toggled, this, &gameconfig::aiMode_checked);
     connect(ui->twoPlayerMode, &QRadioButton::toggled, this, &gameconfig::twoPlayer_checked);
+    connect(ui->gptMode, &QRadioButton::toggled, this, &gameconfig::gptMode_checked);
+
     // set base size for siders
     ui->spinBox->setRange(SideConfig::MIN_RANGE, SideConfig::MAX_RANGE);
     ui->horizontalSlider->setRange(SideConfig::MIN_RANGE, SideConfig::MAX_RANGE);
@@ -118,9 +120,14 @@ void gameconfig::updateOnButton(QString const &str) {
 void gameconfig::on_buttonBox_clicked(QAbstractButton *button) {
     if (button == ui->buttonBox->button(QDialogButtonBox::Ok)) {
         if (ui->twoPlayerMode->isChecked()) {
-            logger(logger_level::INFO, "Two player mode selected");
+            logger("Two player mode selected");
+            emit modeUpdated(Mode::TwoPlayer);
+        } else if (ui->gptMode->isChecked()) {
+            logger("GPT mode selected");
+            emit modeUpdated(Mode::GPT);
         } else {
-            logger(logger_level::INFO, "Ai mode selected");
+            logger("Ai mode selected");
+            emit modeUpdated(Mode::AI);
         }
     }
 }
@@ -128,9 +135,10 @@ void gameconfig::on_buttonBox_clicked(QAbstractButton *button) {
 Mode gameconfig::getMode() const noexcept {
     if (ui->twoPlayerMode->isChecked()) {
         return Mode::TwoPlayer;
-    } else {
+    } else if (ui->gptMode->isChecked()) {
+        return Mode::GPT;
+    } else
         return Mode::AI;
-    }
 }
 
 /**
@@ -138,7 +146,7 @@ Mode gameconfig::getMode() const noexcept {
  * @brief gameconfig::on_AiMode_checked
  */
 void gameconfig::aiMode_checked(bool checked) {
-    if(checked) {
+    if (checked) {
         ui->lineEdit2->setText(MetaData::AI_NAME);
         ui->lineEdit2->setDisabled(true);
     }
@@ -148,8 +156,8 @@ void gameconfig::aiMode_checked(bool checked) {
  * when user checked two player mode radio button do something
  * @brief gameconfig::on_TwoPlayer_checked()
  */
-void gameconfig::twoPlayer_checked(bool checked)  {
-    if(checked) {
+void gameconfig::twoPlayer_checked(bool checked) {
+    if (checked) {
         ui->lineEdit2->setText("");
         ui->lineEdit2->setDisabled(false);
     }
@@ -160,10 +168,22 @@ void gameconfig::twoPlayer_checked(bool checked)  {
  * @param m
  */
 void gameconfig::setMode(Mode m) {
-    if(m == Mode::AI)
+    if (m == Mode::AI)
         ui->AiMode->setChecked(true);
-    else
-        ui->twoPlayerMode->setChecked(true);
+    else if (m == Mode::GPT)
+        ui->gptMode->setChecked(true);
+    ui->twoPlayerMode->setChecked(true);
 
     emit modeUpdated(m);
+}
+
+/**
+ * @brief gameconfig::gptMode_checked
+ * @param checked
+ */
+void gameconfig::gptMode_checked(bool checked) {
+    if (checked) {
+        ui->lineEdit2->setText(MetaData::GPT_NAME);
+        ui->lineEdit2->setDisabled(true);
+    }
 }

@@ -9,3 +9,6 @@ class TicTacToe(ConanFile):
         self.requires("catch2/3.5.2")
         self.requires("spdlog/1.13.0")
         self.requires("ccache/4.9")
+        self.requires("libcurl/8.5.0")
+        self.requires("nlohmann_json/3.11.3")
+

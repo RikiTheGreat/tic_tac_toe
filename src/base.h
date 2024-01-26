@@ -13,8 +13,9 @@ struct MetaData {
     static inline QString DRAW_COLOR{"yellow"};
     static constexpr int FREEZE_TIME = 2000;  // 2 sec
     static constexpr int END_GAME_WITH = 500;
-    static inline  QString AI_NAME = "Master Ai";
-    static constexpr int AI_DELAY = 1000;
+    static inline QString AI_NAME = "Master Ai";
+    static inline QString GPT_NAME = "Miss GPT";
+    static constexpr int AI_DELAY = 2000;
 };
 
 /**
@@ -62,6 +63,7 @@ enum class logger_level {
  */
 enum class Mode {
     AI,
-    TwoPlayer
+    TwoPlayer,
+    GPT
 };
 #endif  // BASE_H
